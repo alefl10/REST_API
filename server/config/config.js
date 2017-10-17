@@ -1,45 +1,34 @@
-const _ = require("lodash");
+var _ = require('lodash');
 
-//Default config object for our api
-const config = {
-  dev: "development",
-  test: "testing",
-  prod: "production",
-  port: process.env.PORT || 3000
+var config = {
+  dev: 'development',
+  test: 'testing',
+  prod: 'production',
+  port: process.env.PORT || 3000,
+  // 10 days in minutes
+  expireTime: 24 * 60 * 10,
+  secrets: {
+    jwt: process.env.JWT || 'gumball'
+  }
 };
 
-//check to see if the NODE_ENV was set, set it to dev otherwise
 process.env.NODE_ENV = process.env.NODE_ENV || config.dev;
-
-//set config.env to whatever the NODE_ENV is
 config.env = process.env.NODE_ENV;
 
-/* TODO:
-* envConfig is nothing right now, but it should be an object.
-* Depending on whatever config.env is, load the appropiate file
-* add/assign the value to envConfig so that the meger at the bottom
-* actually works.
-* What is happening here is that we have a base config in this file
-* we conditionally load in another config file depending o what env
-* env we are in. We then merge those objects with the env config
-* overwriting the default config if here.
-* We then export the new objectfor our app to use
-*/
-
-/*
-* require could error out if the does not exist so let's try the
-* followin statement and fall back to an empty object if it actually
-* errors out
-*/
-let envConfig;
+var envConfig;
+// require could error out if
+// the file don't exist so lets try this statement
+// and fallback to an empty object if it does error out
 try {
-  envConfig = require(`./${config.dev}`);
-  // Just making sure the require got something (file) back
+  envConfig = require('./' + config.env);
+  // just making sure the require actually
+  // got something back :)
   envConfig = envConfig || {};
-} catch (e) {
+} catch(e) {
   envConfig = {};
 }
 
-
-
+// merge the two config files together
+// the envConfig file will overwrite properties
+// on the config object
 module.exports = _.merge(config, envConfig);

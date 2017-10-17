@@ -1,66 +1,72 @@
-const Post = require("./postModel.js");
-const _ = require("lodash");
-const mongoose = require("mongoose");
+var Post = require('./postModel');
+var _ = require('lodash');
+var logger = require('../../util/logger');
 
-mongoose.connect('mongodb://localhost/Lynda', {
-    useMongoClient: true,
-  })
-  .then(db => {
-    console.log("Connected to mongoDB!!");
-  })
-  .catch(err => {
-    console.log(err);
-  })
-
-exports.params = (req, res, next, id) => {
+exports.params = function(req, res, next, id) {
   Post.findById(id)
-    .populate("author categories")
-    .then(post => {
+    .populate('author')
+    .exec()
+    .then(function(post) {
       if (!post) {
-        next(new Error("No post with that id"));
+        next(new Error('No post with that id'));
       } else {
         req.post = post;
         next();
       }
-    })
-    .catch(err => next(err));
+    }, function(err) {
+      next(err);
+    });
 };
 
-exports.get = (req, res, next) => {
+exports.get = function(req, res, next) {
   Post.find({})
-    .populate("author categories")
-    .then(posts => res.json(posts))
-    .catch(err => next(err));
+    .populate('author categories')
+    .exec()
+    .then(function(posts){
+      res.json(posts);
+    }, function(err){
+      next(err);
+    });
 };
 
-exports.getOne = (req, res, next) => {
-  const post = req.post;
+exports.getOne = function(req, res, next) {
+  var post = req.post;
   res.json(post);
 };
 
-exports.put = (req, res, next) => {
-  const post = req.post;
-  const update = req.body;
+exports.put = function(req, res, next) {
+  var post = req.post;
+
+  var update = req.body;
+
   _.merge(post, update);
 
-  post.save()
-    .then(saved => res.json(saved))
-    .catch(err => next(err));
-}
+  post.save(function(err, saved) {
+    if (err) {
+      next(err);
+    } else {
+      res.json(saved);
+    }
+  })
+};
 
-exports.post = (req, res, next) => {
-  const newPost = req.body;
-  Post.create(newPost)
-    .then(post => {
+exports.post = function(req, res, next) {
+  var newpost = req.body;
+  Post.create(newpost)
+    .then(function(post) {
       res.json(post);
-    })
-    .catch(err => next(err));
-}
+    }, function(err) {
+      logger.error(err);
+      next(err);
+    });
+};
 
-exports.delete = (req, res, next) => {
-  req.post.remove()
-    .then(removed => {
+exports.delete = function(req, res, next) {
+  req.post.remove(function(err, removed) {
+    if (err) {
+      next(err);
+    } else {
       res.json(removed);
-    })
-    .catch(err => next(err));
-}
+    }
+  });
+};

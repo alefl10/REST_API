@@ -1,59 +1,67 @@
-const Category = require("./categoryModel.js");
-const _ = require("lodash");
-const mongoose = require("mongoose");
+var Category = require('./categoryModel');
+var _ = require('lodash');
 
-mongoose.connect('mongodb://localhost/Lynda', {
-    useMongoClient: true,
-  })
-  .then(db => {
-    console.log("Connected to mongoDB!!");
-  })
-  .catch(err => {
-    console.log(err);
-  });
-
-exports.params = (req, res, next, id) => {
+exports.params = function(req, res, next, id) {
   Category.findById(id)
-    .then(category => {
+    .then(function(category) {
       if (!category) {
-        next(new Error("No category with that id"));
+        next(new Error('No category with that id'));
       } else {
         req.category = category;
         next();
       }
-    })
-    .catch(err => next(err));
+    }, function(err) {
+      next(err);
+    });
 };
 
-exports.get = (req, res, next) => {
+exports.get = function(req, res, next) {
   Category.find({})
-    .then(categories => res.json(categories))
-    .catch(err => next(err));
+    .then(function(categories){
+      res.json(categories);
+    }, function(err){
+      next(err);
+    });
 };
 
-exports.getOne = (req, res, next) => {
-  const category = req.category;
+exports.getOne = function(req, res, next) {
+  var category = req.category;
   res.json(category);
 };
 
-exports.put = (req, res, next) => {
-  const category = req.category;
-  const update = req.body;
+exports.put = function(req, res, next) {
+  var category = req.category;
+
+  var update = req.body;
+
   _.merge(category, update);
-  category.save()
-    .then(saved => res.json(saved))
-    .catch(err => next(err));
+
+  category.save(function(err, saved) {
+    if (err) {
+      next(err);
+    } else {
+      res.json(saved);
+    }
+  })
 };
 
-exports.post = (req, res, next) => {
-  const newCategory = req.body;
-  Category.create(newCategory)
-    .then(category => res.json(category))
-    .catch(err => next(err));
+exports.post = function(req, res, next) {
+  var newcategory = req.body;
+
+  Category.create(newcategory)
+    .then(function(category) {
+      res.json(category);
+    }, function(err) {
+      next(err);
+    });
 };
 
-exports.delete = (req, res, next) => {
-  req.category.remove()
-    .then(removed => res.json(removed))
-    .catch(err => next(err));
-}
+exports.delete = function(req, res, next) {
+  req.category.remove(function(err, removed) {
+    if (err) {
+      next(err);
+    } else {
+      res.json(removed);
+    }
+  });
+};

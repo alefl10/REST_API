@@ -1,13 +1,12 @@
-const mongoose = require("mongoose");
-mongoose.Promise = global.Promise;
-const Schema = mongoose.Schema;
+var mongoose = require('mongoose');
+var Schema = mongoose.Schema;
 
-const CategorySchema = new Schema({
+var CategorySchema = new Schema({
   name: {
     type: String,
-    unique: true,
-    required: true
+    required: true,
+    unique: true
   }
 });
 
-module.exports = mongoose.model("categories", CategorySchema);
+module.exports = mongoose.model('category', CategorySchema);

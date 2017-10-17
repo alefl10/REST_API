@@ -1,40 +1,49 @@
-// No const/let/var needed her as colors will be attached to
+// no var needed here, colors will attached colors
 // to String.prototype
+require('colors');
+var _ = require('lodash');
 
-require("colors");
-const _ = require("lodash");
-const config = require("../config/config.js");
+var config = require('../config/config');
 
-//create a noop (NO OPeration) function for whenever loggin is disabled
-const noop = function() {};
+// create a noop (no operation) function for when loggin is disabled
+var noop = function(){};
+// check if loggin is enabled in the config
+// if it is, then use console.log
+// if not then noop
+var consoleLog = config.logging ? console.log.bind(console) : noop;
 
-/*
- * Check if loggin is enabled in the config
- * If it is, then use console.log
- * If not use noop
- */
-
-const consoleLog = config.logging ? console.log.bind(console) : noop;
-
-const logger = {
+var logger = {
   log: function() {
-    // arguments is an array like object with the passed in
-    // arguments to this function
-    const args = _.toArray(arguments)
-      .map(arg => {
-        if (typeof arg === 'object') {
-          // Turn the object to string so we can log all the
-          // properties and color it
-          const string = JSON.stringify(arg, 2);
-          return string.magenta;
+    var tag = '[ ✨ LOG ✨ ]'.green;
+    // arguments is an array like object with all the passed
+    // in arguments to this function
+    var args = _.toArray(arguments)
+      .map(function(arg) {
+        if(typeof arg === 'object') {
+          // turn the object to a string so we
+          // can log all the properties and color it
+          var string = JSON.stringify(arg, null, 2);
+          return tag + '  ' + string.cyan;
         } else {
-          arg += "";
-          return arg.magenta;
+          return tag + '  ' + arg.cyan;
         }
       });
 
-    // Call either console.log or noop her with the console
-    // object as the context and the new colored args
+    // call either console.log or noop here
+    // with the console object as the context
+    // and the new colored args :)
+    consoleLog.apply(console, args);
+  },
+
+  error: function() {
+    var args = _.toArray(arguments)
+      .map(function(arg) {
+        arg = arg.stack || arg;
+        var name = arg.name || '[ ❌ ERROR ❌ ]';
+        var log = name.yellow + '  ' + arg.red;
+        return log;
+      });
+
     consoleLog.apply(console, args);
   }
 };

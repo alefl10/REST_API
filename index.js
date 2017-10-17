@@ -1,20 +1,15 @@
-/*
-* Entry point to our server.
-* PRO-TIP: If you have an index.js file on the root of a folder
-* in node you can just require that folder and node will
-* automatically require the index.js on the root
-*/
+// intro point for our server.
+// PRO-TIP: if you have an index.js file
+// on the root of a folder in node
+// you can just require that folder and node will
+// automatically require the index.js on the root
 
-//Setup config first before anything by requiring it
-const config = require("./server/config/config.js");
-const app = require("./server/server.js");
-
-/*
-* Logger is a wrapper around console.log that adds color,
-* logs object as json and can bbe conditionally turned off
-* so you don't have to erase calls to it
-*/
-const logger = require("./server/util/logger.js");
+// setup config first before anything by requiring it
+var config = require('./server/config/config');
+var app = require('./server/server');
+var logger = require('./server/util/logger');
 
 app.listen(config.port);
-logger.log(`Listening on http://localhost:${config.port}`);
+logger.log('listening on http://localhost:' + config.port);
+
+
