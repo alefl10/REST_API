@@ -1,0 +1,28 @@
+{
+  "name": "afl_api",
+  "version": "1.0.0",
+  "description": "Lynda-API Design in NODE.js Using Express and Mongo (from section 5 and on)",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Alejandro Ferrero",
+  "license": "ISC",
+  "dependencies": {
+    "bcrypt": "^1.0.3",
+    "body-parser": "^1.17.2",
+    "colors": "^1.1.2",
+    "express": "^4.15.3",
+    "express-jwt": "^5.3.0",
+    "jsonwebtoken": "^8.1.0",
+    "lodash": "^4.17.4",
+    "mongoose": "^4.11.4",
+    "morgan": "^1.8.2"
+  },
+  "devDependencies": {
+    "chai": "^4.1.0",
+    "mocha": "^3.4.2",
+    "sinon": "^2.4.1",
+    "supertest": "^3.0.0"
+  }
+}
