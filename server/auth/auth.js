@@ -1,8 +1,10 @@
-var jwt = require('jsonwebtoken');
-var expressJwt = require('express-jwt');
-var config = require('../config/config');
-var checkToken = expressJwt({ secret: config.secrets.jwt });
-var User = require('../api/user/userModel');
+let jwt = require('jsonwebtoken');
+let expressJwt = require('express-jwt');
+let config = require('../config/config');
+let checkToken = expressJwt({
+  secret: config.secrets.jwt
+});
+let User = require('../api/user/userModel');
 
 exports.decodeToken = function() {
   return function(req, res, next) {
@@ -15,7 +17,7 @@ exports.decodeToken = function() {
     }
 
     // this will call next if token is valid
-    // and send error if its not. It will attached
+    // and send error if its not. It will attach
     // the decoded token to req.user
     checkToken(req, res, next);
   };
@@ -23,36 +25,65 @@ exports.decodeToken = function() {
 
 exports.getFreshUser = function() {
   return function(req, res, next) {
-    // we'll have access to req.user here
-    // because we'll use decodeToken in before
+    console.log("Getting Fresh Usser");
+    // we'll have access to req.user here because we'll use decodeToken in before
     // this function in the middleware stack.
-    // req.user will just be an object with the user
-    // id on it. We want the full user object/
-    // if no user is found it
-    // was a valid JWT but didn't decode
-    // to a real user in our DB. Either the user was deleted
-    // since the client got the JWT, or
-    // it was a JWT from some other source
-
-    // update req.user with fresh user from the
-    // stale token data
-
+    // req.user will just be an object with the user id on it.
+    User.findById(req.user._id)
+      .then(user => {
+        // If no user is found, it was a valid JWT but didn't decode
+        // to a real user in our DB. Either the user was deleted
+        // since the client got the JWT, or it was a JWT from some other source
+        if (!user) {
+          res.status(401).send("Unauthorized Access");
+        } else {
+          // update req.user with fresh user from the
+          // stale token data
+          req.user = user;
+          next();
+        }
+      })
+      .catch(err => {
+        next(err);
+      })
   }
 };
 
 exports.verifyUser = function() {
   return function(req, res, next) {
-    var username = req.body.username;
-    var password = req.body.password;
+    let username = req.body.username;
+    let password = req.body.password;
 
-    // if no username or password then stop.
-
+    //Send response if no username or password
+    if (!username || !password) {
+      return req.status(400).send("You need a username and a password");
+    }
     // look user up in the DB so we can check
-    // if the passwords match for the username
+    User.findOne({
+        username: username
+      })
+      .then(user => {
+        // if the passwords match for the username
+        if (!user) {
+          res.status(401).send("No user was found with the given username");
+        } else {
+          // Passing in the posted password, it will hash the
+          // password the same way as the current passwords got hashed
+          if (!user.authenticate(password)) {
+            res.status(401).send("Wrong password");
+          } else {
+            console.log("Username and Password --> OK");
+            //Both username and password are valid
+            //Attach user to req.user
+            req.user = user
+            next();
+          }
+        }
+      })
+      .catch(err => {
+        next(err);
+      })
 
-    // use the authenticate() method on a user doc. Passin
-    // in the posted password, it will hash the
-    // password the same way as the current passwords got hashed
 
 
   };
@@ -60,9 +91,11 @@ exports.verifyUser = function() {
 
 // util method to sign tokens on signup
 exports.signToken = function(id) {
-  return jwt.sign(
-    {_id: id},
-    config.secrets.jwt,
-    {expiresInMinutes: config.expireTime}
+  return jwt.sign({
+      _id: id
+    },
+    config.secrets.jwt, {
+      expiresIn: config.expireTime
+    }
   );
 };
