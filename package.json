@@ -4,7 +4,8 @@
   "description": "Lynda-API Design in NODE.js Using Express and Mongo (from section 5 and on)",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon index.js"
   },
   "author": "Alejandro Ferrero",
   "license": "ISC",
@@ -12,10 +13,12 @@
     "bcrypt": "^1.0.3",
     "body-parser": "^1.17.2",
     "colors": "^1.1.2",
+    "cors": "^2.8.4",
     "express": "^4.15.3",
     "express-jwt": "^5.3.0",
     "jsonwebtoken": "^8.1.0",
     "lodash": "^4.17.4",
+    "method-override": "^2.3.10",
     "mongoose": "^4.11.4",
     "morgan": "^1.8.2"
   },

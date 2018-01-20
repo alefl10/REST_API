@@ -56,8 +56,10 @@ exports.verifyUser = function() {
 
     //Send response if no username or password
     if (!username || !password) {
-      return req.status(400).send("You need a username and a password");
+      res.status(400).send('You need a username and password');
+      return;
     }
+
     // look user up in the DB so we can check
     User.findOne({
         username: username
