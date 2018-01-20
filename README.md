@@ -1,6 +1,6 @@
 # Description
 
-Repository dedicated to practice API development skills based on a <https://lynda.com> tutorial tought by Scott Moss.
+Repository dedicated to practice API development skills based on a <https://lynda.com> tutorial taught by Scott Moss.
 
 ## Breakdown
 
