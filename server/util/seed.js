@@ -1,32 +1,56 @@
-var User = require('../api/user/userModel');
-var Post = require('../api/post/postModel');
-var Category = require('../api/category/categoryModel');
-var _ = require('lodash');
-var logger = require('./logger');
+const User = require('../api/user/userModel');
+const Post = require('../api/post/postModel');
+const Category = require('../api/category/categoryModel');
+const _ = require('lodash');
+const logger = require('./logger');
 
 logger.log('Seeding the Database');
 
-var users = [
-  {username: 'Jimmylo', password: 'test'},
-  {username: 'Xoko', password: 'test'},
-  {username: 'katamon', password: 'test'}
+const users = [
+  {
+    username: 'Jimmylo',
+    password: 'test',
+  },
+  {
+    username: 'Xoko',
+    password: 'test',
+  },
+  {
+    username: 'katamon',
+    password: 'test',
+  },
 ];
 
-var categories = [
-  {name: 'intros'},
-  {name: 'angular'},
-  {name: 'UI/UX'}
+const categories = [
+  {
+    name: 'intros',
+  },
+  {
+    name: 'angular',
+  },
+  {
+    name: 'UI/UX',
+  },
 ];
 
-var posts = [
-  {title: 'Learn angular 2 today', text: 'Angular to is so dope'},
-  {title: '10 reasons you should love IE7', text: 'IE7 is so amazing'},
-  {title: 'Why we switched to Go', text: 'go is dope'}
+const posts = [
+  {
+    title: 'Learn angular 2 today',
+    text: 'Angular to is so dope',
+  },
+  {
+    title: '10 reasons you should love IE7',
+    text: 'IE7 is so amazing',
+  },
+  {
+    title: 'Why we switched to Go',
+    text: 'go is dope',
+  },
 ];
 
-var createDoc = function(model, doc) {
-  return new Promise(function(resolve, reject) {
-    new model(doc).save(function(err, saved) {
+const createDoc = function (Model, doc) {
+  return new Promise(function (resolve, reject) {
+    new Model(doc).save(function (err, saved) {
       return err ? reject(err) : resolve(saved);
     });
   });
@@ -49,7 +73,9 @@ var createUsers = function(data) {
 
   return Promise.all(promises)
     .then(function(users) {
-      return _.merge({users: users}, data || {});
+      return _.merge({
+        users: users
+      }, data || {});
     });
 };
 
@@ -60,7 +86,9 @@ var createCategories = function(data) {
 
   return Promise.all(promises)
     .then(function(categories) {
-      return _.merge({categories: categories}, data || {});
+      return _.merge({
+        categories: categories
+      }, data || {});
     });
 };
 
@@ -82,7 +110,7 @@ var createPosts = function(data) {
 
   return Promise.all(newPosts)
     .then(function(savedPosts) {
-      return Promise.all(savedPosts.map(function(post, i){
+      return Promise.all(savedPosts.map(function(post, i) {
         return addCategory(post, data.categories[i])
       }));
     })

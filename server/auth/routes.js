@@ -1,6 +1,8 @@
-let router = require('express').Router();
-let verifyUser = require('./auth').verifyUser;
-let controller = require('./controller');
+const router = require('express').Router();
+const controller = require('./controller');
+const {
+  verifyUser,
+} = require('./auth');
 
 // before we send back a jwt, lets check
 // the password and username match what is in the DB

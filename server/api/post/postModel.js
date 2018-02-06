@@ -1,22 +1,22 @@
-var mongoose = require('mongoose');
-mongoose.Promise = global.Promise;
-var Schema = mongoose.Schema;
+const mongoose = require('mongoose');
 
-var PostSchema = new Schema({
+mongoose.Promise = global.Promise;
+const {
+  Schema,
+} = mongoose;
+
+const PostSchema = new Schema({
   title: {
     type: String,
     required: true,
-    unique: true
+    unique: true,
   },
-
   text: {
     type: String,
-    required: true
+    required: true,
   },
-
-  author: {type: Schema.Types.ObjectId, ref: 'user'},
-
-  categories: [{type: Schema.Types.ObjectId, ref: 'category'}]
+  author: { type: Schema.Types.ObjectId, ref: 'user' },
+  categories: [{ type: Schema.Types.ObjectId, ref: 'category' }],
 });
 
 module.exports = mongoose.model('post', PostSchema);

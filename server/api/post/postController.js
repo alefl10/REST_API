@@ -1,72 +1,78 @@
-var Post = require('./postModel');
-var _ = require('lodash');
-var logger = require('../../util/logger');
+const Post = require('./postModel');
+const _ = require('lodash');
+const logger = require('../../util/logger');
 
-exports.params = function(req, res, next, id) {
+exports.params = (req, res, next, id) => {
   Post.findById(id)
     .populate('author', 'username')
     .exec()
-    .then(function(post) {
+    .then((post) => {
       if (!post) {
         next(new Error('No post with that id'));
       } else {
         req.post = post;
         next();
       }
-    }, function(err) {
+    })
+    .catch((err) => {
       next(err);
     });
 };
 
-exports.get = function(req, res, next) {
+exports.get = (req, res, next) => {
   Post.find({})
     .populate('author categories')
     .exec()
-    .then(function(posts) {
+    .then((posts) => {
       res.json(posts);
-    }, function(err) {
+    })
+    .catch((err) => {
       next(err);
     });
 };
 
-exports.getOne = function(req, res, next) {
-  var post = req.post;
+exports.getOne = (req, res) => {
+  const {
+    post,
+  } = req;
   res.json(post);
 };
 
-exports.put = function(req, res, next) {
-  var post = req.post;
-
-  var update = req.body;
-
+exports.put = (req, res, next) => {
+  const {
+    post,
+    body: update,
+  } = req;
   _.merge(post, update);
-
-  post.save(function(err, saved) {
-    if (err) {
-      next(err);
-    } else {
+  post.save()
+    .then((saved) => {
       res.json(saved);
-    }
-  })
+    })
+    .catch((err) => {
+      next(err);
+    });
 };
 
-exports.post = function(req, res, next) {
-  var newpost = req.body;
-  Post.create(newpost)
-    .then(function(post) {
+exports.post = (req, res, next) => {
+  const {
+    body: newPost,
+  } = req;
+  Post.create(newPost)
+    .then((post) => {
       res.json(post);
-    }, function(err) {
+    })
+    .catch((err) => {
       logger.error(err);
       next(err);
     });
 };
 
-exports.delete = function(req, res, next) {
-  req.post.remove(function(err, removed) {
-    if (err) {
-      next(err);
-    } else {
+exports.delete = (req, res, next) => {
+  req.post.remove()
+    .then((removed) => {
       res.json(removed);
-    }
-  });
+    })
+    .catch((err) => {
+      next(err);
+    });
 };

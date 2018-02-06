@@ -1,67 +1,70 @@
-var Category = require('./categoryModel');
-var _ = require('lodash');
+const Category = require('./categoryModel');
+const _ = require('lodash');
 
-exports.params = function(req, res, next, id) {
+exports.params = (req, res, next, id) => {
   Category.findById(id)
-    .then(function(category) {
+    .then((category) => {
       if (!category) {
         next(new Error('No category with that id'));
       } else {
         req.category = category;
         next();
       }
-    }, function(err) {
+    })
+    .catch((err) => {
       next(err);
     });
 };
 
-exports.get = function(req, res, next) {
+exports.get = (req, res, next) => {
   Category.find({})
-    .then(function(categories){
+    .then((categories) => {
       res.json(categories);
-    }, function(err){
+    })
+    .catch((err) => {
       next(err);
     });
 };
 
-exports.getOne = function(req, res, next) {
-  var category = req.category;
+exports.getOne = (req, res) => {
+  const {
+    category,
+  } = req;
   res.json(category);
 };
 
-exports.put = function(req, res, next) {
-  var category = req.category;
-
-  var update = req.body;
-
+exports.put = (req, res, next) => {
+  const {
+    category,
+    body: update,
+  } = req;
   _.merge(category, update);
-
-  category.save(function(err, saved) {
-    if (err) {
-      next(err);
-    } else {
+  category.save()
+    .then((saved) => {
       res.json(saved);
-    }
-  })
-};
-
-exports.post = function(req, res, next) {
-  var newcategory = req.body;
-
-  Category.create(newcategory)
-    .then(function(category) {
-      res.json(category);
-    }, function(err) {
+    })
+    .catch((err) => {
       next(err);
     });
 };
 
-exports.delete = function(req, res, next) {
-  req.category.remove(function(err, removed) {
-    if (err) {
+exports.post = (req, res, next) => {
+  const newcategory = req.body;
+  Category.create(newcategory)
+    .then((category) => {
+      res.json(category);
+    })
+    .catch((err) => {
       next(err);
-    } else {
+    });
+};
+
+exports.delete = (req, res, next) => {
+  req.category.remove()
+    .then((removed) => {
       res.json(removed);
-    }
-  });
+    })
+    .catch((err) => {
+      next(err);
+    });
 };

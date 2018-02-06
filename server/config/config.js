@@ -1,6 +1,6 @@
-var _ = require('lodash');
+const _ = require('lodash');
 
-var config = {
+const config = {
   dev: 'development',
   test: 'testing',
   prod: 'production',
@@ -8,14 +8,14 @@ var config = {
   // 10 days in minutes
   expireTime: 24 * 60 * 10,
   secrets: {
-    jwt: process.env.JWT || 'gumball'
-  }
+    jwt: process.env.JWT || 'gumball',
+  },
 };
 
 process.env.NODE_ENV = process.env.NODE_ENV || config.dev;
 config.env = process.env.NODE_ENV;
 
-var envConfig;
+let envConfig;
 // require could error out if
 // the file don't exist so lets try this statement
 // and fallback to an empty object if it does error out
@@ -24,7 +24,7 @@ try {
   // just making sure the require actually
   // got something back :)
   envConfig = envConfig || {};
-} catch(e) {
+} catch (e) {
   envConfig = {};
 }
 
