@@ -4,7 +4,7 @@ Repository dedicated to practice API development skills based on a <https://lynd
 
 ## Breakdown
 
-- **Node.js** (JavaScript) was the selected framework used to design, build, and test this RESTful API
+- **Node.js/ Express.js** (JavaScript) was the selected framework used to design, build, and test this RESTful API
   - Main JavaScript libraries used for the completion of the project
     - express
     - body-parser
